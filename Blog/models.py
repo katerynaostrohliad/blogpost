@@ -13,6 +13,7 @@ class User(models.Model):
     user_country = models.CharField(max_length=30, default=None)
     user_city = models.CharField(max_length=30, default=None)
     user_email = models.EmailField(max_length=254, unique=True, default='noreply@gmail.com')
+    USERNAME_FIELD = 'username'
 
 
 class SignUpForm(UserCreationForm):

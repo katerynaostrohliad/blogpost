@@ -29,8 +29,8 @@ class Signup(APIView):
                 subject = 'Activate Your Blog Account'
 
                 t = Template('Hi {{ user }}! '
-                             'To activate your account, please, go to the following link '
-                             'http://{{ domain }}activate{{uid}}{{token}}.')
+                                 'To activate your account, please, go to the following link '
+                                 'http://{{ domain }}activate{{uid}}{{token}}.')
                 message = Context({
                     'user': user,
                     'domain': current_site.domain,
@@ -42,14 +42,14 @@ class Signup(APIView):
                 msg = EmailMultiAlternatives(subject, content, from_email, user_email)
                 msg.send()
                 return redirect('Activationsent')
-        else:
-            form = SignUpForm()
-            return render_to_response(request, 'my_signup_form.html', {'form': form})
+            else:
+                form = SignUpForm()
+                return render_to_response(request, 'my_signup_form.html', {"form": form})
         return Response(status=200)
 
     def get(self, request):
-        if request.method == 'GET':
-            return Response(status=200)
+        form = SignUpForm()
+        return render_to_response(request, 'my_signup_form.html', {"form": form})
 
 
 class Activationsent(APIView):
