@@ -14,20 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf.urls import url, include
+from django.conf.urls import include
 from django.urls import path
-
 from Blog.views import Signup, Getinfo, Activationsent, Login, Logout, home
 from Blog import views as core_views
 
 urlpatterns = [
-    url('admin/', admin.site.urls),
-    url(r'^Signup/', Signup.as_view()),
-    url(r'^Getinfo/', Getinfo.as_view()),
-    url(r'^Activationsent/', Activationsent.as_view()),
-    url(r'^Login/', Login.as_view()),
-    url(r'^Logout/', Logout.as_view()),
-    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', core_views.activate,
-        name='activate'),
+    path('admin/', admin.site.urls),
+    path('signup/', Signup.as_view()),
+    path('getinfo/', Getinfo.as_view()),
+    path('activationsent/', Activationsent.as_view()),
+    path('login/', Login.as_view()),
+    path('logout/', Logout.as_view()),
+    path('activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+         core_views.activate, name='activate'),
 
 ]

@@ -9,9 +9,9 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.views import APIView, Response, status
-from .models import User, SignUpForm
+from .models import User, SignUpForm, LoginForm
 from .serializers import UserSerializer
-from Blog.templates.tokens import account_activation_token
+from Blog.tokens import account_activation_token
 
 
 class Signup(APIView):
@@ -49,7 +49,7 @@ class Signup(APIView):
 
     def get(self, request):
         form = SignUpForm()
-        return render_to_response(request, 'my_signup_form.html', {"form": form})
+        return render(request, 'my_signup_form.html', {"form": form})
 
 
 class Activationsent(APIView):
@@ -86,7 +86,7 @@ class Login(APIView):
 
     def post(self, request):
         if request.method == 'POST':
-            form = SignUpForm(request.POST)
+            form = LoginForm(request.POST)
             if form.is_valid():
                 try:
                     user_email = request.POST.get['user_email']
@@ -96,10 +96,10 @@ class Login(APIView):
                     return redirect(home)
                 except User.DoesNotExist:
                     return Response('Password or email is wrong.')
-        else:
-            form = SignUpForm()
-            return render_to_response(request, 'signup.html', {'form': form})
-        return Response(status=200)
+
+    def get(self, request):
+        form = LoginForm()
+        return render(request, 'login_form.html', {'form': form})
 
 
 class Logout(APIView):

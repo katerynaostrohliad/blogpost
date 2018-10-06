@@ -1,5 +1,6 @@
+
 from django.db import models
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -20,6 +21,12 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('user_email', 'username', 'first_name', 'last_name', 'birthday', 'user_country', 'user_city')
+
+
+class LoginForm(AuthenticationForm):
+    class Meta:
+        model = User
+        fields = ('user_mail', 'password')
 
 
 class Profile(models.Model):
