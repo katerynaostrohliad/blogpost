@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+<header>
+    <h1>Home Page</h1>
+  </header>
+    <main>
+
+        {% block nav %}
+        <ul id="nav">
+            <li>{% block nav-logine %}<a href="{% url 'login' %}">Login</a>{% endblock %}</li>
+            <li>{% block nav-signup %}<a href="{% url 'signup' %}">Signup</a>{% endblock %}</li>
+            <li>{% block nav-posts %}<a href="{% url 'create' %}">Create a post</a>{% endblock %}</li>
+        </ul>
+        {% endblock %}
+
+
+    <article>
+      <h1>Google Chrome</h1>
+      <p>Google Chrome is a free, open-source web browser developed by Google, released in 2008.</p>
+    </article>
+
+    </main>
+</html>

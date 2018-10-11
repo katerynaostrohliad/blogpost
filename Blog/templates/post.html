@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+<header>
+    <h1>Title: {{eachpost.title}}</h1>
+  </header>
+    <main>
+
+        <h1>Content: {{eachpost.content}}</h1>
+        <br/>
+
+        <h1>Author: {{ eachpost.author }}</h1>
+
+
+        <a href="#" onClick="document.getElementById('likebutton').submit()">Like This Post</a> {{eachpost.likes}}
+        <a href="#" onClick="document.getElementById('dislikebutton').submit()">Dislike This Post</a> {{eachpost.dislikes}}
+
+
+        <form id="likebutton" method="POST" action="/posts/{{eachpost.id}}/preference/1/">
+        {% csrf_token %}
+        <input type="hidden">
+        </form>
+
+        <form id="dislikebutton" method="POST" action="/posts/{{eachpost.id}}/preference/2/">
+        {% csrf_token %}
+        <input type="hidden">
+        </form>
+
+        {% block nav %}
+        <ul id="nav">
+            <li>{% block nav-home %}<a href="{% url 'login' %}">Login</a>{% endblock %}</li>
+            <li>{% block nav-about %}<a href="{% url 'signup' %}">Signup</a>{% endblock %}</li>
+        </ul>
+        {% endblock %}
+
+
+    </main>
+</html>
