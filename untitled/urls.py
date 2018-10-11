@@ -16,17 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import include, url
 from django.urls import path
-from Blog.views import Signup, Getinfo, Activationsent, Login, Logout, home
-from Blog import views as core_views
+from Blog.views import Signup, Getinfo, Activationsent, Login, Logout
+from Blog import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('signup/', Signup.as_view()),
     path('getinfo/', Getinfo.as_view()),
     path('activationsent/', Activationsent.as_view()),
-    path('login/', Login.as_view()),
     path('logout/', Logout.as_view()),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-         core_views.activate, name='activate'),
+         views.activate, name='activate'),
+    path('home/', views.home, name='home'),
+    path('home/', include('Blog.urls')),
+    path('home/login/', Login.as_view(), name='login'),
 
 ]

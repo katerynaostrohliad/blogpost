@@ -2,16 +2,17 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 from django.template import Context, Template
 from django.utils.encoding import force_bytes
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.views import APIView, Response, status
-from .models import User, SignUpForm, LoginForm
+from .models import User, SignUpForm, LoginForm, PostForm
 from .serializers import UserSerializer
 from Blog.tokens import account_activation_token
+from rest_framework.decorators import api_view
 
 
 class Signup(APIView):
@@ -30,7 +31,7 @@ class Signup(APIView):
 
                 t = Template('Hi {{ user }}! '
                                  'To activate your account, please, go to the following link '
-                                 'http://{{ domain }}activate{{uid}}{{token}}.')
+                                 'http://{{ domain }}activate{{ uid }}{{ token }}.')
                 message = Context({
                     'user': user,
                     'domain': current_site.domain,
@@ -42,10 +43,6 @@ class Signup(APIView):
                 msg = EmailMultiAlternatives(subject, content, from_email, user_email)
                 msg.send()
                 return redirect('Activationsent')
-            else:
-                form = SignUpForm()
-                return render_to_response(request, 'my_signup_form.html', {"form": form})
-        return Response(status=200)
 
     def get(self, request):
         form = SignUpForm()
@@ -85,17 +82,16 @@ def activate(self, request, uidb64, token):
 class Login(APIView):
 
     def post(self, request):
-        if request.method == 'POST':
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                try:
-                    user_email = request.POST.get['user_email']
-                    password = request.POST.get['password']
-                    user = authenticate(request, user_email=user_email, password=password)
-                    login(request, user)
-                    return redirect(home)
-                except User.DoesNotExist:
-                    return Response('Password or email is wrong.')
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get['username']
+            password = request.POST.get['password']
+            user = authenticate(request, username=username, password=password)
+            login(request, user)
+        if User.DoesNotExist:
+            return render(request, 'login_failed.html')
+        else:
+            return redirect('home')
 
     def get(self, request):
         form = LoginForm()
@@ -120,5 +116,34 @@ class Getinfo(APIView):
 
 
 @login_required
+@api_view(['GET', 'POST'])
 def home(request):
-    return Response('Home Page')
+    if request.method == 'GET':
+        return render(request, 'home_page.html', {'login': Login,
+                                                  'signup': Signup,
+                                                  'create': create
+                                                  })
+
+
+#START HERE
+@login_required
+@api_view(['GET', 'POST'])
+def create(request):
+    if request.method == 'POST':
+        form = PostForm()
+        if form.is_valid():
+            form.save()
+        return Response('Posted!')
+    else:
+        form = PostForm()
+        return render(request, 'post_creation.html', {"form": form})
+
+#def like_dislike(self, request):
+    #pass
+
+#def all_posts(self, request):
+    #pass
+
+#def sorting(self, request):
+    #pass
+
