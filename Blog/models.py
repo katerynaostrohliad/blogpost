@@ -18,11 +18,6 @@ class User(models.Model):
     USERNAME_FIELD = 'username'
 
 
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    clicked = models.IntegerField(default=0)
-
-
 def get_image_path(instance, filename):
     return os.path.join('photos', str(instance.id), filename)
 
@@ -34,8 +29,24 @@ class Post(models.Model):
     content = models.CharField(max_length=10000, default=None)
     photo = models.ImageField(upload_to=get_image_path, blank=True, null=True)
     url = models.SlugField(max_length=300)
-    likes = models.ManyToManyField(Like)
 
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    clicked = models.IntegerField(default=0)
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateField(default=timezone.now)
+    content = models.CharField(max_length=10000, default=None)
+
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content', )
 
 
 class SignUpForm(UserCreationForm):

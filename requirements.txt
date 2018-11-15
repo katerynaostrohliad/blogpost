@@ -3,3 +3,4 @@ djangorestframework==3.8.2
 psycopg2==2.7.5
 pytz==2018.5
 Pillow-5.3.0
+URLObject-2.4.3 django-appconf-1.0.2 django-sorter-0.2 django-ttag-3.0 six-1.11.0

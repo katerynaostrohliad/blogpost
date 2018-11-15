@@ -2,14 +2,14 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import Context, Template
 from django.utils.encoding import force_bytes
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.views import APIView, Response, status
-from .models import User, SignUpForm, LoginForm, PostForm
+from .models import User, SignUpForm, LoginForm, PostForm, Post, CommentForm, Like
 from .serializers import UserSerializer
 from Blog.tokens import account_activation_token
 from rest_framework.decorators import api_view
@@ -115,35 +115,60 @@ class Getinfo(APIView):
         return Response(info, status=status.HTTP_200_OK)
 
 
-@login_required
+#@login_required
 @api_view(['GET', 'POST'])
 def home(request):
     if request.method == 'GET':
         return render(request, 'home_page.html', {'login': Login,
                                                   'signup': Signup,
-                                                  'create': create
+                                                  'create': create,
                                                   })
 
 
-#START HERE
-@login_required
+#@login_required
 @api_view(['GET', 'POST'])
 def create(request):
     if request.method == 'POST':
         form = PostForm()
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
         return Response('Posted!')
     else:
         form = PostForm()
         return render(request, 'post_creation.html', {"form": form})
 
-#def like_dislike(self, request):
-    #pass
 
-#def all_posts(self, request):
-    #pass
+@api_view(['GET', 'POST'])
+def open_post(request):
+    if request.method == 'POST':
+        post = get_object_or_404(Post)
+        form = CommentForm(request.POST or None)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+        new_like = Like.objects.get_or_create(user=request.user, post=post)
+        if not new_like:
+            new_like.delete()
+        else:
+            new_like.save()
+    else:
+        post = get_object_or_404(Post)
+        return render(request, 'post.html', {'post': post})
 
+
+@api_view(['GET', 'POST'])
+def posts(self, request):
+    if request.method == 'POST':
+        return redirect(open_post)
+    else:
+        post = Post.objects.all()
+    return render(request, 'posts.html', {'posts': post})
+
+
+#########
 #def sorting(self, request):
     #pass
 

@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Posts</title>
+{% block content %}
 
-</head>
-<body>
-
-</body>
-</html>
+    {% for post in posts %}
+        <div class="post">
+            <div class="date">
+                {{ post.created }}
+            </div>
+            <h1><a href="">{{ post.title }}</a></h1>
+            <p>{{ post.content|linebreaksbr }}</p>
+            <img width="104" height="142" src="{{ post.photo }}">
+        </div>
+    {% endfor %}
+{% endblock %}

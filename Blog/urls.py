@@ -4,8 +4,10 @@ from .views import Signup, Login, Logout
 
 urlpatterns = [
     path('signup/', Signup.as_view(), name='signup'),
-    path('login/', Login.as_view(), name='login'),
+    #path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
-    path('create/', views.create, name='create')
+    path('create/', views.create, name='create'),
+    path('post/', views.open_post, name='post'),
+    path('posts/', views.posts, name='posts')
 
 ]
