@@ -13,7 +13,7 @@ from .models import User, SignUpForm, LoginForm, PostForm, Post, CommentForm, Li
 from .serializers import UserSerializer
 from Blog.tokens import account_activation_token
 from rest_framework.decorators import api_view
-
+from django_filters.rest_framework import FilterSet
 
 class Signup(APIView):
 
@@ -122,6 +122,7 @@ def home(request):
         return render(request, 'home_page.html', {'login': Login,
                                                   'signup': Signup,
                                                   'create': create,
+                                                  'posts': posts,
                                                   })
 
 
@@ -159,16 +160,17 @@ def open_post(request):
         return render(request, 'post.html', {'post': post})
 
 
+class PostFilter(FilterSet):
+
+    class Meta:
+        model = Post
+        fields = ('created', 'user', 'title')
+
+
 @api_view(['GET', 'POST'])
-def posts(self, request):
+def posts(request):
     if request.method == 'POST':
         return redirect(open_post)
     else:
-        post = Post.objects.all()
-    return render(request, 'posts.html', {'posts': post})
-
-
-#########
-#def sorting(self, request):
-    #pass
-
+        posts = PostFilter(request.GET, queryset=Post.objects.all())
+    return render(request, 'posts.html', {'posts': posts})

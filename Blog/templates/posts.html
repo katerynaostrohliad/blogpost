@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-{% block content %}
 
-    {% for post in posts %}
-        <div class="post">
-            <div class="date">
-                {{ post.created }}
-            </div>
-            <h1><a href="">{{ post.title }}</a></h1>
-            <p>{{ post.content|linebreaksbr }}</p>
-            <img width="104" height="142" src="{{ post.photo }}">
-        </div>
+
+{% block content %}
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form>
+    {% for obj in filter.qs %}
+        {{ obj.created }} - ${{ obj.title }}<br />
     {% endfor %}
 {% endblock %}
